@@ -14,6 +14,8 @@ export default defineConfig({
     // Исходники сайта живут в src/ — это веб-корень проекта
     root: 'src',
     publicDir: '../public',
+    // GitHub Pages обслуживает проект по подпути /massnedra/
+    base: '/massnedra/',
     css: {
         transformer: 'lightningcss',
         lightningcss: {
