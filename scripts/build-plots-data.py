@@ -13,6 +13,8 @@ from pathlib import Path
 import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent
+CENTERS_JSON = ROOT / 'scripts' / 'district-centers.json'
+REGIONS_JSON = ROOT / 'public' / 'geo' / 'regions.json'
 SITE_JSON = ROOT / 'scripts' / 'plots-site.json'
 OUT_TS = ROOT / 'src' / 'js' / 'data' / 'plots.ts'
 
@@ -128,11 +130,38 @@ def _common_suffix(a: str, b: str) -> int:
     return n
 
 
+def norm_key(location: str) -> str:
+    key = re.sub(r'муниципальный округ', '', location, flags=re.IGNORECASE)
+    key = re.sub(r'муниципальный район', '', key, flags=re.IGNORECASE)
+    key = re.sub(r'городской округ', '', key, flags=re.IGNORECASE)
+    key = re.sub(r'район', '', key, flags=re.IGNORECASE)
+    return re.sub(r'\s+', ' ', key).strip()
+
+
+def plot_point(plot: dict, centers: dict):
+    """Точная точка (центроид контура) или центр района."""
+    if plot['polygon']:
+        n = len(plot['polygon'])
+        lat = sum(p[0] for p in plot['polygon']) / n
+        lon = sum(p[1] for p in plot['polygon']) / n
+        return [round(lat, 7), round(lon, 7)]
+    direct = centers.get(norm_key(plot['location']))
+    if direct:
+        return direct
+    # Фолбэк: центроид региона (участки без района в источниках)
+    region_rings = REGIONS_JSON and json.loads(REGIONS_JSON.read_text(encoding='utf-8')).get(plot['region'])
+    if region_rings:
+        pts = [p for poly in region_rings for ring in poly for p in ring]
+        return [round(sum(p[0] for p in pts) / len(pts), 7), round(sum(p[1] for p in pts) / len(pts), 7)]
+    return None
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit('Использование: build-plots-data.py <объекты.xlsx>')
     xlsx_plots = parse_xlsx(resolve_xlsx(sys.argv[1]))
     cards = json.loads(SITE_JSON.read_text(encoding='utf-8'))
+    centers = json.loads(CENTERS_JSON.read_text(encoding='utf-8'))
 
     plots = []
     used_cards = set()
@@ -234,6 +263,11 @@ def main():
         lines.append(f'    areaKm2: {p["area"]},')
         lines.append(f'    minerals: [{minerals}],')
         lines.append(f'    polygon: {polygon if polygon else "null"},')
+        point = plot_point(p, centers)
+        point_ts = (
+            '[' + ', '.join(f'{c}' for c in point) + ']' if point else 'null'
+        )
+        lines.append(f'    point: {point_ts},')
         lines.append('  },')
     lines.append('];')
     lines.append('')

@@ -10,6 +10,8 @@ export interface PlotArea {
   areaKm2: number;
   /** Полезные ископаемые. */
   minerals: string[];
+  /** Точка участка на карте (центроид контура или центр района). */
+  point: YmapsCoordinates | null;
   /** Контур участка (ГСК-2011 → WGS-84, [lat, lon]); null — контур не задан. */
   polygon: YmapsCoordinates[] | null;
 }

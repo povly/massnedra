@@ -37,13 +37,24 @@ function balloonHtml(plot: PlotArea, approximated: boolean): string {
   ].join('');
 }
 
-/** Метки ВСЕХ участков: клик — выбор участка (панель деталей + балун). */
+/**
+ * Метки ВСЕХ участков: клик — выбор участка (панель деталей + балун).
+ * Точки запечены в данных (plot.point); у участков без контура точка
+ * приближённая (центр района) и помечается в балуне.
+ */
 export function createPlotPlacemarks(
-  items: readonly PlacemarkInput[],
+  plots: readonly PlotArea[],
 ): Array<{plot: PlotArea; point: YmapsCoordinates; placemark: YmapsPlacemark}> {
-  return items.map(({plot, point, approximated}) => {
+  const result: Array<{
+    plot: PlotArea;
+    point: YmapsCoordinates;
+    placemark: YmapsPlacemark;
+  }> = [];
+  for (const plot of plots) {
+    if (!plot.point) continue;
+    const approximated = !plot.polygon;
     const placemark = new ymaps.Placemark(
-      point,
+      plot.point,
       {
         balloonContentHeader: escapeHtml(plot.name),
         balloonContentBody: balloonHtml(plot, approximated),
@@ -59,8 +70,9 @@ export function createPlotPlacemarks(
     placemark.events.add('click', () => {
       mapFocusRef?.(plot);
     });
-    return {plot, point, placemark};
-  });
+    result.push({plot, point: plot.point, placemark});
+  }
+  return result;
 }
 
 let mapFocusRef: ((plot: PlotArea) => void) | null = null;

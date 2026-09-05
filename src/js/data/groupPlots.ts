@@ -22,14 +22,9 @@ export function districtDisplayName(districtKey: string): string {
   return `${districtKey} район`;
 }
 
-/** Центроид полигона — точка участка на карте. null для участков без контура. */
+/** Точка участка на карте (запечена в данные при сборке). */
 export function plotPoint(plot: PlotArea): YmapsCoordinates | null {
-  if (!plot.polygon || plot.polygon.length === 0) return null;
-  const sum = plot.polygon.reduce<[number, number]>(
-    (acc, [lat, lon]) => [acc[0] + lat, acc[1] + lon],
-    [0, 0],
-  );
-  return [sum[0] / plot.polygon.length, sum[1] / plot.polygon.length];
+  return plot.point;
 }
 
 export function groupPlotsByRegion(plots: readonly PlotArea[]): PlotGroup[] {

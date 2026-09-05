@@ -3,12 +3,10 @@ import {
   districtDisplayName,
   groupPlotsByDistrict,
   groupPlotsByRegion,
-  plotPoint,
 } from './data/groupPlots';
 import {getDomRefs} from './dom';
 import {createMap} from './map/createMap';
 import {createPlotPlacemarks, setMapFocusHandler} from './map/plotPlacemarks';
-import type {PlacemarkInput} from './map/plotPlacemarks';
 import {createPlotPolygons} from './map/plotPolygons';
 import {createNavigation} from './navigation';
 import {initScrollables} from './vendor/scrollable';
@@ -65,18 +63,35 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Границы по ФАКТИЧЕСКИМ точкам меток (включая приближённые)
-  function boundsOf(visiblePlots: readonly PlotArea[]): [number, number][] | null {
-    const points = placemarks
-      .filter(({plot}) => visiblePlots.includes(plot))
-      .map(({point}) => point);
-    if (points.length === 0) return null;
-    const lats = points.map(([lat]) => lat);
-    const lons = points.map(([, lon]) => lon);
-    return [
-      [Math.min(...lats), Math.min(...lons)],
-      [Math.max(...lats), Math.max(...lons)],
-    ];
-  }
+    // Минимальный охват рамки в градусах — иначе одна точка даёт максимальный зум
+    const MIN_VIEW_SPAN = 4;
+
+    function boundsOf(visiblePlots: readonly PlotArea[]): [number, number][] | null {
+      const points = placemarks
+        .filter(({plot}) => visiblePlots.includes(plot))
+        .map(({point}) => point);
+      if (points.length === 0) return null;
+      const lats = points.map(([lat]) => lat);
+      const lons = points.map(([, lon]) => lon);
+      let minLat = Math.min(...lats);
+      let maxLat = Math.max(...lats);
+      let minLon = Math.min(...lons);
+      let maxLon = Math.max(...lons);
+      if (maxLat - minLat < MIN_VIEW_SPAN) {
+        const mid = (minLat + maxLat) / 2;
+        minLat = mid - MIN_VIEW_SPAN / 2;
+        maxLat = mid + MIN_VIEW_SPAN / 2;
+      }
+      if (maxLon - minLon < MIN_VIEW_SPAN) {
+        const mid = (minLon + maxLon) / 2;
+        minLon = mid - MIN_VIEW_SPAN / 2;
+        maxLon = mid + MIN_VIEW_SPAN / 2;
+      }
+      return [
+        [minLat, minLon],
+        [maxLat, maxLon],
+      ];
+    }
 
   function fitTo(visiblePlots: readonly PlotArea[]): void {
     if (!map) return;
@@ -92,7 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
       fitTo(plotsInScope('districts'));
       return;
     }
-    map.setCenter(match.point, 9);
+    map.setCenter(match.point, 5);
     match.placemark.balloon.open();
   }
 
@@ -205,72 +220,6 @@ window.addEventListener('DOMContentLoaded', () => {
   render('regions');
   switcher.show('regions');
 
-  // Геокодирование центров районов — параллельно, один запрос на район
-  const districtCenters = new Map<string, YmapsCoordinates | null>();
-
-  async function resolveDistrictCenter(
-    plot: PlotArea,
-  ): Promise<YmapsCoordinates | null> {
-    const key = `${plot.region}|${districtKey(plot)}`;
-    if (districtCenters.has(key)) return districtCenters.get(key) ?? null;
-    let center: YmapsCoordinates | null = null;
-    try {
-      const result = await ymaps.geocode(`${plot.region}, ${plot.location}`, {
-        results: 1,
-      });
-      const first = result.geoObjects.get(0);
-      center = first ? first.geometry.getCoordinates() : null;
-    } catch (error) {
-      console.warn(`[p-map] геокодирование не удалось: ${plot.location}`, error);
-    }
-    districtCenters.set(key, center);
-    return center;
-  }
-
-  async function resolvePlacemarkInputs(): Promise<PlacemarkInput[]> {
-    // Сначала параллельно геокодируем все недостающие районы
-    const unmapped = plots.filter((plot) => !plotPoint(plot));
-    const districtIds = [
-      ...new Set(unmapped.map((plot) => `${plot.region}|${districtKey(plot)}`)),
-    ];
-    await Promise.all(
-      districtIds.map(async (key) => {
-        const [region, district] = key.split('|');
-        const sample = unmapped.find(
-          (plot) => plot.region === region && districtKey(plot) === district,
-        );
-        if (sample) await resolveDistrictCenter(sample);
-      }),
-    );
-
-    // Затем расставляем все метки
-    const inputs: PlacemarkInput[] = [];
-    const approximateOrder = new Map<string, number>();
-    for (const plot of plots) {
-      const exact = plotPoint(plot);
-      if (exact) {
-        inputs.push({plot, point: exact, approximated: false});
-        continue;
-      }
-      const center = await resolveDistrictCenter(plot);
-      if (!center) continue;
-      const districtId = `${plot.region}|${districtKey(plot)}`;
-      const order = approximateOrder.get(districtId) ?? 0;
-      approximateOrder.set(districtId, order + 1);
-      // Разводим участки одного района по кругу, чтобы не слипались
-      const angle = (order * Math.PI * 2) / 8;
-      inputs.push({
-        plot,
-        point: [
-          center[0] + 0.06 * Math.cos(angle),
-          center[1] + 0.09 * Math.sin(angle),
-        ],
-        approximated: true,
-      });
-    }
-    return inputs;
-  }
-
   // Карта и всё зависимое от API Яндекса
   ymaps.ready(() => {
     map = createMap();
@@ -279,15 +228,9 @@ window.addEventListener('DOMContentLoaded', () => {
     plotPolygons = createPlotPolygons();
     plotPolygons.create(plots, map);
 
-    resolvePlacemarkInputs()
-      .then((inputs) => {
-        placemarks = createPlotPlacemarks(inputs);
-        for (const {placemark} of placemarks) map?.geoObjects.add(placemark);
-        // Пересинхронизация текущего уровня: видимость меток + рамка
-        render(navigation.level);
-      })
-      .catch((error) => {
-        console.warn('[p-map] инициализация меток не удалась:', error);
-      });
+    // Метки всех участков — точки уже запечены в данных
+    placemarks = createPlotPlacemarks(plots);
+    for (const {placemark} of placemarks) map?.geoObjects.add(placemark);
+    render(navigation.level);
   });
 });
