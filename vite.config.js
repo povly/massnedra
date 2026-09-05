@@ -69,7 +69,8 @@ export default defineConfig({
         port: 5173,
     },
     build: {
-        outDir: '../dist',
+        // Сборка в docs/ — её отдаёт GitHub Pages (main + /docs)
+        outDir: '../docs',
         emptyOutDir: true,
         cssMinify: 'lightningcss',
         minify: true,

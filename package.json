@@ -10,6 +10,7 @@
     "assets:fonts": "node scripts/convert-fonts.js",
     "assets": "npm run assets:images && npm run assets:svg && npm run assets:fonts",
     "build": "npm run assets && tsc --noEmit && vite build",
+    "deploy": "npm run build && git add docs && git commit -m \"deploy: update built site\" && git push",
     "preview": "vite preview"
   },
   "devDependencies": {
