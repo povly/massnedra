@@ -4,7 +4,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№51. Сивагли",
     region: "Амурская область",
-    location: "2",
+    location: "Тындинский район",
     areaKm2: 59.78,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -12,7 +12,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№55. Дямкундя",
     region: "Амурская область",
-    location: "2",
+    location: "Мазановский район",
     areaKm2: 98.96,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -60,7 +60,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№20. Наледный",
     region: "Магаданская область",
-    location: "2",
+    location: "Сусуманский район",
     areaKm2: 149.6,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -108,7 +108,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№83. Хохондя",
     region: "Магаданская область",
-    location: "2",
+    location: "Омсукчанский район",
     areaKm2: 24.72,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -116,7 +116,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№86. Быстрянка",
     region: "Магаданская область",
-    location: "2",
+    location: "Ольский муниципальный округ",
     areaKm2: 101.36,
     minerals: ["MPG", "Ni", "Cu", "Au", "Ag"],
     polygon: null,
@@ -124,7 +124,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№.82 Горелый",
     region: "Магаданская область",
-    location: "2",
+    location: "Омсукчанский район",
     areaKm2: 24.72,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -172,7 +172,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№1. Аркинская площадь",
     region: "Хабаровский край",
-    location: "2",
+    location: "Охотский район",
     areaKm2: 99.2,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -180,7 +180,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№5. Ауринское",
     region: "Хабаровский край",
-    location: "2",
+    location: "Ульчский район",
     areaKm2: 97.8,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -188,7 +188,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№11. Нимакан",
     region: "Хабаровский край",
-    location: "2",
+    location: "Верхнебуреинский район",
     areaKm2: 98.1,
     minerals: [],
     polygon: null,
@@ -196,7 +196,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№14. Кантагарское",
     region: "Хабаровский край",
-    location: "2",
+    location: "Ульчский район",
     areaKm2: 96.1,
     minerals: ["Cu", "Mo", "Ag", "Au"],
     polygon: null,
@@ -204,7 +204,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№15. Кайловый",
     region: "Хабаровский край",
-    location: "2",
+    location: "Ульчский район",
     areaKm2: 98.9,
     minerals: [],
     polygon: null,
@@ -212,7 +212,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№16. Лимонитовое",
     region: "Хабаровский край",
-    location: "2",
+    location: "Ульчский район",
     areaKm2: 81.3,
     minerals: ["Mo", "Pb", "Ag", "Au"],
     polygon: null,
@@ -220,7 +220,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№19. Ветвистое",
     region: "Хабаровский край",
-    location: "2",
+    location: "Район имени Лазо",
     areaKm2: 56.3,
     minerals: ["Sn", "W", "Cu", "Au"],
     polygon: null,
@@ -228,7 +228,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№25. Гадекчан-1",
     region: "Хабаровский край",
-    location: "2",
+    location: "Охотский район",
     areaKm2: 82.0,
     minerals: ["Au", "Ag", "Pb", "Zn"],
     polygon: null,
@@ -244,7 +244,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№27. Пионерское",
     region: "Хабаровский край",
-    location: "2",
+    location: "Советско-Гаванский и Ванинский районы",
     areaKm2: 88.6,
     minerals: ["Ag", "Pb", "Zn", "Sn"],
     polygon: null,
@@ -252,7 +252,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№28. Дельфин",
     region: "Хабаровский край",
-    location: "2",
+    location: "Нанайский район",
     areaKm2: 95.6,
     minerals: ["Cu", "Sn", "W", "Ag"],
     polygon: null,
@@ -276,7 +276,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№35. Мамга",
     region: "Хабаровский край",
-    location: "2",
+    location: "Тугуро-Чумиканский район",
     areaKm2: 29.6,
     minerals: [],
     polygon: null,
@@ -332,7 +332,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№60. Бокур",
     region: "Хабаровский край",
-    location: "2",
+    location: "Аяно-Майский район",
     areaKm2: 98.5,
     minerals: ["Au"],
     polygon: null,
@@ -348,7 +348,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№69. Хоюнда",
     region: "Хабаровский край",
-    location: "2",
+    location: "Аяно-Майский район",
     areaKm2: 27.3,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -356,7 +356,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№70. Килый",
     region: "Хабаровский край",
-    location: "2",
+    location: "Аяно-Майский район",
     areaKm2: 90.52,
     minerals: [],
     polygon: null,
@@ -364,7 +364,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№71. Большой Саргат",
     region: "Хабаровский край",
-    location: "2",
+    location: "Район имени Полины Осипенко",
     areaKm2: 98.5,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -372,7 +372,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№73. Ниман",
     region: "Хабаровский край",
-    location: "2",
+    location: "Верхнебуреинский район",
     areaKm2: 94.99,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -380,7 +380,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№74. Эльге",
     region: "Хабаровский край",
-    location: "2",
+    location: "Ульчский район",
     areaKm2: 57.52,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -388,7 +388,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№75. Верхне-Анюйский",
     region: "Хабаровский край",
-    location: "2",
+    location: "Нанайский район",
     areaKm2: 92.59,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -412,7 +412,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№82. Левый Курункан",
     region: "Хабаровский край",
-    location: "2",
+    location: "пос. Нелькан",
     areaKm2: 155.0,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -420,7 +420,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "№85. Асиберган",
     region: "Хабаровский край",
-    location: "2",
+    location: "",
     areaKm2: 55.9,
     minerals: ["Au", "Ag"],
     polygon: null,
@@ -436,7 +436,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "1А. Долми 1",
     region: "Хабаровский край",
-    location: "2",
+    location: "Район имени Лазо",
     areaKm2: 234.6,
     minerals: [],
     polygon: null,
@@ -444,7 +444,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "2А. Долми 2",
     region: "Хабаровский край",
-    location: "2",
+    location: "Район имени Лазо",
     areaKm2: 234.6,
     minerals: [],
     polygon: null,
@@ -452,7 +452,7 @@ export const plots: readonly PlotArea[] = [
   {
     name: "3А. Долми 3",
     region: "Хабаровский край",
-    location: "2",
+    location: "Район имени Лазо",
     areaKm2: 234.6,
     minerals: [],
     polygon: null,

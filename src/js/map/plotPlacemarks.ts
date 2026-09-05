@@ -40,7 +40,7 @@ function balloonHtml(plot: PlotArea, approximated: boolean): string {
 /** Метки ВСЕХ участков: клик — выбор участка (панель деталей + балун). */
 export function createPlotPlacemarks(
   items: readonly PlacemarkInput[],
-): Array<{plot: PlotArea; placemark: YmapsPlacemark}> {
+): Array<{plot: PlotArea; point: YmapsCoordinates; placemark: YmapsPlacemark}> {
   return items.map(({plot, point, approximated}) => {
     const placemark = new ymaps.Placemark(
       point,
@@ -59,7 +59,7 @@ export function createPlotPlacemarks(
     placemark.events.add('click', () => {
       mapFocusRef?.(plot);
     });
-    return {plot, placemark};
+    return {plot, point, placemark};
   });
 }
 

@@ -76,6 +76,8 @@ def parse_xlsx(path: str):
 
 def parse_card_desc(desc: str):
     """Площадь, район и ископаемые из описания карточки."""
+    # «км\n2» — разорванная надстрочная двойка в «км²»
+    desc = re.sub(r'км\s*\n\s*2\b', 'км2', desc)
     area = None
     m = re.search(r'Площадь:?\s*([\d.,]+)\s*км', desc, re.IGNORECASE)
     if m:
@@ -88,8 +90,10 @@ def parse_card_desc(desc: str):
         # строка между площадью и "Полезные ископаемые"
         lines = [l.strip() for l in desc.split('\n') if l.strip()]
         for i, l in enumerate(lines):
-            if 'Площадь' in l and i + 1 < len(lines) and 'Полезные' not in lines[i + 1] and 'км' not in lines[i + 1]:
-                location = lines[i + 1]
+            if 'Площадь' in l and i + 1 < len(lines):
+                nxt = lines[i + 1]
+                if 'Полезные' not in nxt and 'км' not in nxt and not re.match(r'^2$', nxt.strip()):
+                    location = nxt
                 break
     minerals = []
     min_m = re.search(r'Полезные ископаемы[^:]*:\s*([\s\S]+)$', desc, re.IGNORECASE)

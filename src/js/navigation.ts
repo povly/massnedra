@@ -7,61 +7,77 @@ export interface NavigationCallbacks {
   showPanel(panel: 'regions' | 'list' | 'object'): void;
 }
 
+interface NavState {
+  level: Level;
+  region: string | null;
+  district: string | null;
+}
+
 export interface Navigation {
   readonly level: Level;
   readonly region: string | null;
   readonly district: string | null;
   openDistricts(region: string): void;
   openPlots(district: string): void;
+  /** Детали участка с запоминанием уровня возврата (карта/список). */
   openObject(): void;
   goBack(): void;
 }
 
 export function createNavigation(callbacks: NavigationCallbacks): Navigation {
-  let level: Level = 'regions';
-  let region: string | null = null;
-  let district: string | null = null;
+  let current: NavState = {level: 'regions', region: null, district: null};
+  // Куда вернуться по «Назад» из деталей (список, карта или Drill-down)
+  let returnState: NavState | null = null;
 
-  function set(next: Level, nextRegion: string | null, nextDistrict: string | null): void {
-    level = next;
-    region = nextRegion;
-    district = nextDistrict;
-    callbacks.render(level);
+  function apply(state: NavState): void {
+    current = state;
+    callbacks.render(state.level);
     callbacks.showPanel(
-      level === 'regions' ? 'regions' : level === 'object' ? 'object' : 'list',
+      state.level === 'regions'
+        ? 'regions'
+        : state.level === 'object'
+          ? 'object'
+          : 'list',
     );
   }
 
   return {
     get level(): Level {
-      return level;
+      return current.level;
     },
     get region(): string | null {
-      return region;
+      return current.region;
     },
     get district(): string | null {
-      return district;
+      return current.district;
     },
 
-    openDistricts(nextRegion: string): void {
-      set('districts', nextRegion, null);
+    openDistricts(region: string): void {
+      apply({level: 'districts', region, district: null});
     },
 
-    openPlots(nextDistrict: string): void {
-      set('plots', region, nextDistrict);
+    openPlots(district: string): void {
+      apply({level: 'plots', region: current.region, district});
     },
 
-    // Детали участка — состояние района/региона не меняется
     openObject(): void {
-      level = 'object';
-      callbacks.render(level);
-      callbacks.showPanel('object');
+      returnState = {...current};
+      apply({level: 'object', region: current.region, district: current.district});
     },
 
     goBack(): void {
-      if (level === 'object') set('plots', region, district);
-      else if (level === 'plots') set('districts', region, null);
-      else if (level === 'districts') set('regions', null, null);
+      if (current.level === 'object') {
+        apply(returnState ?? {level: 'regions', region: null, district: null});
+        returnState = null;
+        return;
+      }
+      if (current.level === 'plots') {
+        apply({level: 'districts', region: current.region, district: null});
+        return;
+      }
+      if (current.level === 'districts') {
+        apply({level: 'regions', region: null, district: null});
+      }
     },
   };
 }

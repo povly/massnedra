@@ -97,7 +97,11 @@ window.addEventListener('load', () => {
       return inputs;
     }
 
-    let placemarks: Array<{plot: PlotArea; placemark: YmapsPlacemark}> = [];
+    let placemarks: Array<{
+      plot: PlotArea;
+      point: YmapsCoordinates;
+      placemark: YmapsPlacemark;
+    }> = [];
 
     const switcher = createPanelSwitcher({
       groups: refs.groups,
@@ -115,9 +119,10 @@ window.addEventListener('load', () => {
     }
 
     function boundsOf(visiblePlots: readonly PlotArea[]): [number, number][] | null {
-      const points = visiblePlots
-        .map((plot) => plotPoint(plot))
-        .filter((point): point is YmapsCoordinates => point !== null);
+      // Границы по ФАКТИЧЕСКИМ точкам меток (включая приближённые)
+      const points = placemarks
+        .filter(({plot}) => visiblePlots.includes(plot))
+        .map(({point}) => point);
       if (points.length === 0) return null;
       const lats = points.map(([lat]) => lat);
       const lons = points.map(([, lon]) => lon);
@@ -150,11 +155,10 @@ window.addEventListener('load', () => {
       plotPolygons.highlight(plot);
       renderObject(refs, plot);
       navigation.openObject();
-      const point = plotPoint(plot);
-      if (point) {
-        map.setCenter(point, 11);
-        const match = placemarks.find((item) => item.plot === plot);
-        if (match) match.placemark.balloon.open();
+      const match = placemarks.find((item) => item.plot === plot);
+      if (match) {
+        map.setCenter(match.point, 9);
+        match.placemark.balloon.open();
       }
     }
 
