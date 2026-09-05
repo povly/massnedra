@@ -126,7 +126,7 @@ window.addEventListener('DOMContentLoaded', () => {
     selectedPlot = plot;
     plotPolygons?.highlight(plot);
     renderObject(refs, plot);
-    navigation.openObject();
+    navigation.openObject(plot.name);
     focusPlot(plot);
   }
 
@@ -179,7 +179,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     if (level === 'object') {
-      if (selectedPlot) renderObject(refs, selectedPlot);
+      // Восстанавливаем участок из истории: «назад» может вернуть к другой карточке
+      const resolved =
+        plots.find((plot) => plot.name === navigation.plotName) ?? selectedPlot;
+      if (resolved) {
+        selectedPlot = resolved;
+        plotPolygons?.highlight(resolved);
+        renderObject(refs, resolved);
+      }
       return;
     }
 
@@ -208,11 +215,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // Кнопка «Назад»
   document.querySelectorAll('.p-map__back').forEach((backButton) => {
     backButton.addEventListener('click', () => {
-      if (navigation.level === 'object') {
+      navigation.goBack();
+      // Подсветку снимаем только при уходе из деталей; при возврате к другой
+      // карточке renderImpl('object') сам восстановит selectedPlot и подсветку
+      if (navigation.level !== 'object') {
         selectedPlot = null;
         plotPolygons?.highlight(null);
       }
-      navigation.goBack();
     });
   });
 
