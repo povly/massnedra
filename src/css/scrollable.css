@@ -1,0 +1,114 @@
+/* ========================================
+   Scrollable — custom scrollbar overlay
+   Ядро x-scrollable (порт из bronber-store,
+   resources/css/components/scrollable.css).
+   Инициализируется на элементах [data-scrollable].
+   ========================================
+   Cross-browser native scrollbar hiding:
+   - Firefox:  scrollbar-width: none
+   - IE10+/Edge legacy: -ms-overflow-style: none
+   - Chrome/Safari/Opera/Edge (Chromium): ::-webkit-scrollbar { display: none }
+   ======================================== */
+
+/* Селектор по атрибуту прячет нативный скроллбар с первого пэйнта,
+   до инициализации скрипта — иначе при загрузке виден системный скролл,
+   а затем контент дёргается при его подмене классом .x-scrollable. */
+.x-scrollable,
+[data-scrollable] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
+
+.x-scrollable__wrapper {
+    position: relative;
+    display: inherit;
+}
+
+.x-scrollable__track {
+    position: absolute;
+    top: 0;
+    right: var(--x-scroll-track-offset, 2px);
+    bottom: 0;
+    width: var(--x-scroll-thumb-width, 4px);
+    pointer-events: auto;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.25s ease;
+
+    &.is-pending {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.is-faded {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.x-scrollable__thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: var(--x-scroll-thumb-color, #bfbfbf);
+    border-radius: var(--x-scroll-thumb-radius, 4px);
+    cursor: grab;
+    transform: translateY(0);
+    will-change: transform, height;
+    transition: height 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+        filter: brightness(0.85);
+    }
+
+    &.is-dragging,
+    &:active {
+        cursor: grabbing;
+        filter: brightness(0.75);
+    }
+}
+
+/* Reduced motion: drop transitions */
+@media (prefers-reduced-motion: reduce) {
+    .x-scrollable__track,
+    .x-scrollable__thumb {
+        transition: none;
+    }
+}
+
+/* ========================================
+   Horizontal orientation (opt-in via wrapper.is-horizontal)
+   — overrides vertical track/thumb rules above.
+   --x-scroll-thumb-width becomes track HEIGHT on this axis.
+   ======================================== */
+.x-scrollable__wrapper.is-horizontal .x-scrollable__track {
+    top: auto;
+    right: 0;
+    bottom: var(--x-scroll-track-offset, 2px);
+    left: 0;
+    width: auto;
+    height: var(--x-scroll-thumb-width, 4px);
+}
+
+.x-scrollable__wrapper.is-horizontal .x-scrollable__thumb {
+    top: 0;
+    right: auto;
+    width: 0;
+    height: 100%;
+    transform: translateX(0);
+    will-change: transform, width;
+    transition: width 0.15s ease, background-color 0.15s ease;
+}
