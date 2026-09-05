@@ -5,6 +5,7 @@
 
 export interface MapDomRefs {
   mapItem: HTMLElement;
+  mapIframe: HTMLElement;
   mapShow: HTMLElement;
   groups: HTMLElement;
   places: HTMLElement;
@@ -18,6 +19,7 @@ export interface MapDomRefs {
 
 const SELECTORS = {
   mapItem: '.p-map__item',
+  mapIframe: '#p-map__iframe',
   mapShow: '.p-map__show',
   groups: '.p-map__groups',
   places: '.p-map__places',
@@ -41,6 +43,7 @@ function requireEl<T extends HTMLElement>(selector: string): T {
 export function getDomRefs(): MapDomRefs {
   return {
     mapItem: requireEl(SELECTORS.mapItem),
+    mapIframe: requireEl(SELECTORS.mapIframe),
     mapShow: requireEl(SELECTORS.mapShow),
     groups: requireEl(SELECTORS.groups),
     places: requireEl(SELECTORS.places),
