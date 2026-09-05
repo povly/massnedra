@@ -107,7 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
       fitTo(plotsInScope('districts'));
       return;
     }
-    map.setCenter(match.point, 5);
+        map.setCenter(match.point, 3);
     match.placemark.balloon.open();
   }
 
