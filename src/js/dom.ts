@@ -8,8 +8,12 @@ export interface MapDomRefs {
   mapShow: HTMLElement;
   groups: HTMLElement;
   places: HTMLElement;
+  object: HTMLElement;
   placesTitle: HTMLElement;
   placesItems: HTMLElement;
+  objectTitle: HTMLElement;
+  objectSubtitle: HTMLElement;
+  objectText: HTMLElement;
 }
 
 const SELECTORS = {
@@ -17,8 +21,12 @@ const SELECTORS = {
   mapShow: '.p-map__show',
   groups: '.p-map__groups',
   places: '.p-map__places',
+  object: '.p-map__object',
   placesTitle: '.p-map__places-title',
   placesItems: '.p-map__places-items',
+  objectTitle: '.p-map__object-title',
+  objectSubtitle: '.p-map__object-subtitle',
+  objectText: '.p-map__object-text',
 } as const;
 
 function requireEl<T extends HTMLElement>(selector: string): T {
@@ -36,7 +44,11 @@ export function getDomRefs(): MapDomRefs {
     mapShow: requireEl(SELECTORS.mapShow),
     groups: requireEl(SELECTORS.groups),
     places: requireEl(SELECTORS.places),
+    object: requireEl(SELECTORS.object),
     placesTitle: requireEl(SELECTORS.placesTitle),
     placesItems: requireEl(SELECTORS.placesItems),
+    objectTitle: requireEl(SELECTORS.objectTitle),
+    objectSubtitle: requireEl(SELECTORS.objectSubtitle),
+    objectText: requireEl(SELECTORS.objectText),
   };
 }

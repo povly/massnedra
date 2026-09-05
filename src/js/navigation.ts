@@ -1,16 +1,10 @@
-/**
- * Навигация по уровням: области → районы → точки, с кнопкой «Назад».
- * Логика переходов отделена от DOM (DIP: работает через PanelSwitcher
- * и переданные коллбеки).
- */
-
-export type Level = 'regions' | 'districts' | 'plots';
+export type Level = 'regions' | 'districts' | 'plots' | 'object';
 
 export interface NavigationCallbacks {
-  /** Пере-рендер текущего уровня списка. */
+  /** Пере-рендер текущего уровня списка/деталей. */
   render(level: Level): void;
   /** Смена видимости панелей. */
-  showPanel(panel: 'regions' | 'list'): void;
+  showPanel(panel: 'regions' | 'list' | 'object'): void;
 }
 
 export interface Navigation {
@@ -19,6 +13,7 @@ export interface Navigation {
   readonly district: string | null;
   openDistricts(region: string): void;
   openPlots(district: string): void;
+  openObject(): void;
   goBack(): void;
 }
 
@@ -32,7 +27,9 @@ export function createNavigation(callbacks: NavigationCallbacks): Navigation {
     region = nextRegion;
     district = nextDistrict;
     callbacks.render(level);
-    callbacks.showPanel(level === 'regions' ? 'regions' : 'list');
+    callbacks.showPanel(
+      level === 'regions' ? 'regions' : level === 'object' ? 'object' : 'list',
+    );
   }
 
   return {
@@ -54,8 +51,16 @@ export function createNavigation(callbacks: NavigationCallbacks): Navigation {
       set('plots', region, nextDistrict);
     },
 
+    // Детали участка — состояние района/региона не меняется
+    openObject(): void {
+      level = 'object';
+      callbacks.render(level);
+      callbacks.showPanel('object');
+    },
+
     goBack(): void {
-      if (level === 'plots') set('districts', region, null);
+      if (level === 'object') set('plots', region, district);
+      else if (level === 'plots') set('districts', region, null);
       else if (level === 'districts') set('regions', null, null);
     },
   };

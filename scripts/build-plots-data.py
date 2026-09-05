@@ -166,8 +166,7 @@ def main():
                 'location': xp['location'],
                 'area': xp['area'],
                 'minerals': xp['minerals'],
-                'url': None,
-                'polygon': xp['polygon'],
+                    'polygon': xp['polygon'],
             })
             used_xlsx.add(xp['name'])
             continue
@@ -178,7 +177,6 @@ def main():
             'location': xp['location'] or card['location'],
             'area': xp['area'] or card['area'],
             'minerals': xp['minerals'] or card['minerals'],
-            'url': card['card']['url'],
             'polygon': xp['polygon'],
         })
         used_xlsx.add(xp['name'])
@@ -196,7 +194,6 @@ def main():
             'location': loc_from_desc,
             'area': fc['area'] or area,
             'minerals': fc['minerals'] or minerals_from_desc,
-            'url': card['url'],
             'polygon': None,
         })
 
@@ -232,7 +229,6 @@ def main():
         lines.append(f'    location: {ts_str(p["location"])},')
         lines.append(f'    areaKm2: {p["area"]},')
         lines.append(f'    minerals: [{minerals}],')
-        lines.append(f'    url: {ts_str(p["url"]) if p["url"] else "null"},')
         lines.append(f'    polygon: {polygon if polygon else "null"},')
         lines.append('  },')
     lines.append('];')

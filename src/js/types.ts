@@ -10,8 +10,6 @@ export interface PlotArea {
   areaKm2: number;
   /** Полезные ископаемые. */
   minerals: string[];
-  /** Карточка проекта на massnedra.com, если есть. */
-  url: string | null;
   /** Контур участка (ГСК-2011 → WGS-84, [lat, lon]); null — контур не задан. */
   polygon: YmapsCoordinates[] | null;
 }
@@ -117,6 +115,16 @@ export interface YmapsApi {
     properties: Record<string, unknown> | null,
     options: Record<string, unknown>,
   ) => YmapsPolygon;
+  geocode: {
+    /**
+     * Геокодирование адреса/топонима. Результат — коллекция
+     * geoObjects (get(index).geometry.getCoordinates()).
+     */
+    (
+      request: string,
+      options?: {results?: number},
+    ): Promise<{geoObjects: {get(index: number): YmapsPlacemark | null}}>;
+  };
 }
 
 declare global {

@@ -1,4 +1,3 @@
-import {plotPoint} from '../data/groupPlots';
 import type {PlotArea, YmapsCoordinates, YmapsPlacemark} from '../types';
 
 const PIN_URL =
@@ -6,6 +5,16 @@ const PIN_URL =
 
 const PIN_SIZE: [number, number] = [34, 48];
 const PIN_OFFSET: [number, number] = [-19, -48];
+
+const APPROXIMATE_NOTE =
+  '<br/><small>Точка показывает центр района — координаты участка уточняются</small>';
+
+export interface PlacemarkInput {
+  plot: PlotArea;
+  point: YmapsCoordinates;
+  /** true — точка приближённая (центр района), а не контур участка. */
+  approximated: boolean;
+}
 
 const ESCAPE_RULES: Record<string, string> = {
   '&': '&amp;',
@@ -17,31 +26,27 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>]/g, (ch) => ESCAPE_RULES[ch] ?? ch);
 }
 
-function balloonHtml(plot: PlotArea): string {
-  const minerals = plot.minerals.length > 0 ? escapeHtml(plot.minerals.join(', ')) : '—';
+function balloonHtml(plot: PlotArea, approximated: boolean): string {
+  const minerals =
+    plot.minerals.length > 0 ? escapeHtml(plot.minerals.join(', ')) : '—';
   return [
     `${escapeHtml(plot.location)}<br/><br/>`,
     `Площадь: <strong>${plot.areaKm2} км²</strong><br/>`,
     `Полезные ископаемые: ${minerals}`,
+    approximated ? APPROXIMATE_NOTE : '',
   ].join('');
 }
 
-/**
- * Точки участков на карте: клик — балун с описанием, площадью, ископаемыми.
- * Участки без контура (нет координат) на карту не попадают.
- */
+/** Метки ВСЕХ участков: клик — выбор участка (панель деталей + балун). */
 export function createPlotPlacemarks(
-  plots: readonly PlotArea[],
-): YmapsPlacemark[] {
-  const placemarks: YmapsPlacemark[] = [];
-  for (const plot of plots) {
-    const point = plotPoint(plot);
-    if (!point) continue;
+  items: readonly PlacemarkInput[],
+): Array<{plot: PlotArea; placemark: YmapsPlacemark}> {
+  return items.map(({plot, point, approximated}) => {
     const placemark = new ymaps.Placemark(
       point,
       {
         balloonContentHeader: escapeHtml(plot.name),
-        balloonContentBody: balloonHtml(plot),
+        balloonContentBody: balloonHtml(plot, approximated),
         hintContent: escapeHtml(plot.name),
       },
       {
@@ -52,16 +57,17 @@ export function createPlotPlacemarks(
       },
     );
     placemark.events.add('click', () => {
-      mapFocusRef?.(point);
+      mapFocusRef?.(plot);
     });
-    placemarks.push(placemark);
-  }
-  return placemarks;
+    return {plot, placemark};
+  });
 }
 
-let mapFocusRef: ((point: YmapsCoordinates) => void) | null = null;
+let mapFocusRef: ((plot: PlotArea) => void) | null = null;
 
-/** Коллбек плавного центрирования карты при клике на точку (из main). */
-export function setMapFocusHandler(handler: ((point: YmapsCoordinates) => void) | null): void {
+/** Коллбек выбора участка при клике на метку (из main). */
+export function setMapFocusHandler(
+  handler: ((plot: PlotArea) => void) | null,
+): void {
   mapFocusRef = handler;
 }
