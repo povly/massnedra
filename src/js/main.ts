@@ -6,7 +6,7 @@ import {
 } from './data/groupPlots';
 import {getDomRefs} from './dom';
 import {createMap} from './map/createMap';
-import {createPlotPlacemarks, setMapFocusHandler} from './map/plotPlacemarks';
+import {createPlotPlacemarks} from './map/plotPlacemarks';
 import {createPlotPolygons} from './map/plotPolygons';
 import {createNavigation} from './navigation';
 import {initScrollables} from './vendor/scrollable';
@@ -102,12 +102,8 @@ window.addEventListener('DOMContentLoaded', () => {
   function focusPlot(plot: PlotArea): void {
     if (!map) return;
     const match = placemarks.find((item) => item.plot === plot);
-    if (!match) {
-      // У участка нет координат — показываем территорию области
-      fitTo(plotsInScope('districts'));
-      return;
-    }
-        map.setCenter(match.point, 8);
+    if (!match) return;
+    map.setCenter(match.point, 8);
     match.placemark.balloon.open();
   }
 
@@ -209,9 +205,7 @@ window.addEventListener('DOMContentLoaded', () => {
     showPanel: (panel) => switcher.show(panel),
   });
 
-  // Клик по точке на карте — выбираем участок (детали + балун)
-  setMapFocusHandler((plot) => selectPlot(plot));
-
+  // Клик по полигону или метке — выбираем участок (детали + балун)
   // Кнопка «Назад»
   document.querySelectorAll('.p-map__back').forEach((backButton) => {
     backButton.addEventListener('click', () => {
@@ -235,10 +229,10 @@ window.addEventListener('DOMContentLoaded', () => {
     refs.mapIframe.classList.add('is-ready');
 
     plotPolygons = createPlotPolygons();
-    plotPolygons.create(plots, map);
+    plotPolygons.create(plots, map, selectPlot);
 
-    // Метки всех участков — точки уже запечены в данных
-    placemarks = createPlotPlacemarks(plots);
+    // Метки всех участков — точки (центроиды территорий) запечены в данных
+    placemarks = createPlotPlacemarks(plots, selectPlot);
     for (const {placemark} of placemarks) map?.geoObjects.add(placemark);
     render(navigation.level);
   });

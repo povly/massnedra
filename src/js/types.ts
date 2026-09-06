@@ -1,6 +1,6 @@
 /** Участок недр (инвестиционный проект). */
 export interface PlotArea {
-  /** Отображаемое имя карточки, напр. «№32. Турка». */
+  /** Отображаемое имя участка, напр. «Мантагыр». */
   name: string;
   /** Субъект РФ, напр. «Хабаровский край». */
   region: string;
@@ -10,7 +10,7 @@ export interface PlotArea {
   areaKm2: number;
   /** Полезные ископаемые. */
   minerals: string[];
-  /** Точка участка на карте (центроид контура или центр района). */
+  /** Метка участка: центроид территории (запечён при генерации). */
   point: YmapsCoordinates | null;
   /** Контур участка (ГСК-2011 → WGS-84, [lat, lon]); null — контур не задан. */
   polygon: YmapsCoordinates[] | null;
@@ -57,7 +57,11 @@ export interface YmapsPlacemark extends YmapsGeoObjectOptions {
   };
 }
 
-export interface YmapsPolygon extends YmapsGeoObjectOptions {}
+export interface YmapsPolygon extends YmapsGeoObjectOptions {
+  events: {
+    add(type: 'click', handler: (event: YmapsEvent) => void): void;
+  };
+}
 
 export interface YmapsEvent {
   get(name: 'target'): YmapsPlacemark;

@@ -92,7 +92,7 @@ Created: 2026-09-06
   Файлы: `src/js/data/plots.ts` (сгенерированный).
 
 ### Фаза 3: Карта, UI, верификация, документация
-- [ ] T5. Метки в центрах территорий. `src/js/types.ts`: обновить JSDoc
+- [x] T5. Метки в центрах территорий. `src/js/types.ts`: обновить JSDoc
   `PlotArea.point` → «центроид территории (запечён при генерации)».
   `src/js/map/plotPlacemarks.ts`: удалить `APPROXIMATE_NOTE`, флаг
   `approximated` и ветку `if (!plot.point) continue;` оставить как guard;
@@ -101,13 +101,13 @@ Created: 2026-09-06
   `createPlotPlacemarks(plots, onSelect: (plot: PlotArea) => void)`.
   Логирование: без нового. Файлы: `src/js/types.ts`,
   `src/js/map/plotPlacemarks.ts`.
-- [ ] T6. Клик по полигону выбирает участок. `src/js/map/plotPolygons.ts`:
+- [x] T6. Клик по полигону выбирает участок. `src/js/map/plotPolygons.ts`:
   `create(plots, map, onSelect)` — на каждый `ymaps.Polygon` повесить
   `events.add('click', () => onSelect(plot))`. В `src/js/types.ts` дополнить
   тип `YmapsPolygon` минимальным `events.add('click', ...)` (по образцу
   `YmapsPlacemark`), не `<any>`.
   Логирование: без нового. Файлы: `src/js/map/plotPolygons.ts`, `src/js/types.ts`.
-- [ ] T7. Интеграция в main.ts. `src/js/main.ts`: убрать импорт
+- [x] T7. Интеграция в main.ts. `src/js/main.ts`: убрать импорт
   `setMapFocusHandler` и вызов `setMapFocusHandler(...)`; в `ymaps.ready` —
   `createPlotPlacemarks(plots, selectPlot)` и `plotPolygons.create(plots, map,
   selectPlot)` (объявить `selectPlot` до блока `ymaps.ready` — он function

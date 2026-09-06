@@ -6,16 +6,6 @@ const PIN_URL =
 const PIN_SIZE: [number, number] = [34, 48];
 const PIN_OFFSET: [number, number] = [-19, -48];
 
-const APPROXIMATE_NOTE =
-  '<br/><small>Точка показывает центр района — координаты участка уточняются</small>';
-
-export interface PlacemarkInput {
-  plot: PlotArea;
-  point: YmapsCoordinates;
-  /** true — точка приближённая (центр района), а не контур участка. */
-  approximated: boolean;
-}
-
 const ESCAPE_RULES: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
@@ -26,24 +16,23 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>]/g, (ch) => ESCAPE_RULES[ch] ?? ch);
 }
 
-function balloonHtml(plot: PlotArea, approximated: boolean): string {
+function balloonHtml(plot: PlotArea): string {
   const minerals =
     plot.minerals.length > 0 ? escapeHtml(plot.minerals.join(', ')) : '—';
   return [
     `${escapeHtml(plot.location)}<br/><br/>`,
     `Площадь: <strong>${plot.areaKm2} км²</strong><br/>`,
     `Полезные ископаемые: ${minerals}`,
-    approximated ? APPROXIMATE_NOTE : '',
   ].join('');
 }
 
 /**
- * Метки ВСЕХ участков: клик — выбор участка (панель деталей + балун).
- * Точки запечены в данных (plot.point); у участков без контура точка
- * приближённая (центр района) и помечается в балуне.
+ * Метки ВСЕХ участков: точка = центроид территории (запечён в данные).
+ * Клик по метке — выбор участка через onSelect.
  */
 export function createPlotPlacemarks(
   plots: readonly PlotArea[],
+  onSelect: (plot: PlotArea) => void,
 ): Array<{plot: PlotArea; point: YmapsCoordinates; placemark: YmapsPlacemark}> {
   const result: Array<{
     plot: PlotArea;
@@ -52,12 +41,11 @@ export function createPlotPlacemarks(
   }> = [];
   for (const plot of plots) {
     if (!plot.point) continue;
-    const approximated = !plot.polygon;
     const placemark = new ymaps.Placemark(
       plot.point,
       {
         balloonContentHeader: escapeHtml(plot.name),
-        balloonContentBody: balloonHtml(plot, approximated),
+        balloonContentBody: balloonHtml(plot),
         hintContent: escapeHtml(plot.name),
       },
       {
@@ -67,19 +55,8 @@ export function createPlotPlacemarks(
         iconImageOffset: PIN_OFFSET,
       },
     );
-    placemark.events.add('click', () => {
-      mapFocusRef?.(plot);
-    });
+    placemark.events.add('click', () => onSelect(plot));
     result.push({plot, point: plot.point, placemark});
   }
   return result;
-}
-
-let mapFocusRef: ((plot: PlotArea) => void) | null = null;
-
-/** Коллбек выбора участка при клике на метку (из main). */
-export function setMapFocusHandler(
-  handler: ((plot: PlotArea) => void) | null,
-): void {
-  mapFocusRef = handler;
 }
