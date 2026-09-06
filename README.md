@@ -56,4 +56,4 @@ export const plots: PlotArea[] = [
 ## Полезные ссылки
 
 - Живой сайт: https://massnedra.com
-- Источник карточек участков: massnedra.com/investicionnye-proekty
+- Датасет участков: `scripts/source/Объекты_для_размещения_на_сайте_МАН.xlsx`

@@ -30,6 +30,8 @@ massendra/
 │   └── assets/           # Исходные ассеты
 ├── public/               # Статика без обработки (шрифты, favicon, geo, images)
 ├── scripts/              # Генерация ассетов (Node) и геоданных (Python)
+│   ├── source/           # Исходные xlsx-датасеты участков
+│   └── archive/          # Архив старых датасетов (plots-v1)
 ├── docs/                 # Собранный вывод vite build (НЕ редактировать руками)
 ├── .ai-factory/          # Артефакты AI Factory
 └── .opencode/            # Скиллы OpenCode

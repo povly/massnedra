@@ -117,14 +117,14 @@ Created: 2026-09-06
   `setPlacemarksVisible`, `boundsOf`, `MIN_VIEW_SPAN`, `fitTo` — без изменений.
   Логирование: существующий `console.warn` в `render` остаётся.
   Файлы: `src/js/main.ts`.
-- [ ] T8. Верификация. `npm run build` (assets → tsc --noEmit → vite build) —
+- [x] T8. Верификация. `npm run build` (assets → tsc --noEmit → vite build) —
   0 ошибок. Ручной чек-лист в браузере (`npm run dev`): 25 полигонов на карте;
   метки стоят в центрах территорий (проверить 2–3 по зуму); клик по полигону и
   клик по метке открывают карточку + подсветку; навигация назад по истории
   (объект → список участков → районы → области); исчезающие метки при входе в
   район (`setPlacemarksVisible`); зум fitTo по уровням.
   Логирование: вывод сборки. Файлы: без изменений (только проверки).
-- [ ] T9. Документация. `documentation/data-pipeline.md`: новый пайплайн
+- [x] T9. Документация. `documentation/data-pipeline.md`: новый пайплайн
   (один источник xlsx из `scripts/source/`, без plots-site.json/ALIASES,
   точка = центроид), раздел про архив `scripts/archive/plots-v1/`.
   `documentation/architecture.md`: строка map/ — «метки в центрах территорий,
