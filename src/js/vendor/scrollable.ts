@@ -8,11 +8,14 @@ import type {ScrollableOptions} from '../types';
  * браузерах (Firefox не умеет border-radius на thumb, ширины ограничены).
  *
  * Использование:
- *   <div data-scrollable>...</div>                        — дефолтный конфиг
- *   <div data-scrollable='{"thumbWidth": 6}'>...</div>    — JSON-переопределения
+ *   <div data-scrollable>...</div>
+ *
+ * Внешний вид (цвета, ширина, радиус) — только через CSS
+ * (`.x-scrollable__track` / `.x-scrollable__thumb` в scrollable.css);
+ * вариации — отдельными классами на блоке, без inline-стилей.
  *
  * Элемент обязан иметь `overflow-y: auto` (или scroll) и размеры через CSS —
- * директива не навязывает геометрию, только визуал скроллбара.
+ * директива не навязывает геометрию, только поведение скроллбара.
  *
  * Трансформация DOM:
  *   <div data-scrollable>...</div>
@@ -25,10 +28,6 @@ import type {ScrollableOptions} from '../types';
 
 const DEFAULTS: ScrollableOptions = {
   orientation: 'vertical',
-  thumbColor: '#bfbfbf',
-  thumbWidth: 4,
-  thumbRadius: 4,
-  trackOffset: 2,
   minThumbSize: 24,
   autoHide: false,
   fadeDelay: 800,
@@ -70,13 +69,6 @@ export function initScrollable(
 
   const horizontal = opts.orientation === 'horizontal';
 
-  const applyConfig = (): void => {
-    wrapper.style.setProperty('--x-scroll-thumb-width', `${opts.thumbWidth}px`);
-    wrapper.style.setProperty('--x-scroll-thumb-color', opts.thumbColor);
-    wrapper.style.setProperty('--x-scroll-thumb-radius', `${opts.thumbRadius}px`);
-    wrapper.style.setProperty('--x-scroll-track-offset', `${opts.trackOffset}px`);
-  };
-
   // --- Прокручиваемый контекст и позиционирование для трека ---
   const axis = horizontal ? 'overflowX' : 'overflowY';
   const computedStyle = getComputedStyle(el);
@@ -100,7 +92,6 @@ export function initScrollable(
   thumb.className = 'x-scrollable__thumb';
   track.appendChild(thumb);
   wrapper.appendChild(track);
-  applyConfig();
 
   // --- Состояние ---
   let isDragging = false;

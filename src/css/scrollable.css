@@ -33,12 +33,13 @@
 .x-scrollable__track {
     position: absolute;
     top: 0;
-    right: var(--x-scroll-track-offset, 2px);
+    right: 2px;
     bottom: 0;
-    width: var(--x-scroll-thumb-width, 4px);
+    width: 4px;
     pointer-events: auto;
     z-index: 1;
     opacity: 1;
+    background: rgba(104, 104, 104, 0.3);
     transition: opacity 0.25s ease;
 
     &.is-pending {
@@ -63,21 +64,16 @@
     left: 0;
     right: 0;
     height: 0;
-    background: var(--x-scroll-thumb-color, #bfbfbf);
-    border-radius: var(--x-scroll-thumb-radius, 4px);
+    background: #686868;
+    border-radius: 4px;
     cursor: grab;
     transform: translateY(0);
     will-change: transform, height;
     transition: height 0.15s ease, background-color 0.15s ease;
 
-    &:hover {
-        filter: brightness(0.85);
-    }
-
     &.is-dragging,
     &:active {
         cursor: grabbing;
-        filter: brightness(0.75);
     }
 }
 
@@ -97,10 +93,10 @@
 .x-scrollable__wrapper.is-horizontal .x-scrollable__track {
     top: auto;
     right: 0;
-    bottom: var(--x-scroll-track-offset, 2px);
+    bottom: 2px;
     left: 0;
     width: auto;
-    height: var(--x-scroll-thumb-width, 4px);
+    height: 4px;
 }
 
 .x-scrollable__wrapper.is-horizontal .x-scrollable__thumb {

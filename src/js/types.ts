@@ -16,13 +16,9 @@ export interface PlotArea {
   polygon: YmapsCoordinates[] | null;
 }
 
-/** Конфиг кастомного скроллбара (x-scrollable). */
+/** Конфиг кастомного скроллбара (x-scrollable). Визуал — в scrollable.css. */
 export interface ScrollableOptions {
   orientation: 'vertical' | 'horizontal';
-  thumbColor: string;
-  thumbWidth: number;
-  thumbRadius: number;
-  trackOffset: number;
   minThumbSize: number;
   autoHide: boolean;
   fadeDelay: number;
