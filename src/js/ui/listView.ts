@@ -13,7 +13,7 @@ export interface ListElements {
 
 const ARROW_SVG = `
   <svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M2 17.8801L10.8832 8.99695L2 0.11377L0.585786 1.52798L8.05475 8.99695L0.585786 16.4659L2 17.8801Z" fill="#4564FF"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M2 17.8801L10.8832 8.99695L2 0.11377L0.585786 1.52798L8.05475 8.99695L0.585786 16.4659L2 17.8801Z" fill="#e2bf56"/>
   </svg>`;
 
 const ESCAPE_RULES: Record<string, string> = {
