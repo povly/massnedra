@@ -48,7 +48,7 @@ Created: 2026-09-06
 ## Tasks
 
 ### Фаза 1: Архивация и источник данных
-- [ ] T1. Архивировать старый датасет. `mkdir -p scripts/archive/plots-v1`;
+- [x] T1. Архивировать старый датасет. `mkdir -p scripts/archive/plots-v1`;
   переместить туда `scripts/plots-site.json` и `scripts/district-centers.json`
   (`git mv`), скопировать текущий `src/js/data/plots.ts` как
   `scripts/archive/plots-v1/plots-v1.ts.txt`. Написать
@@ -58,7 +58,7 @@ Created: 2026-09-06
   `npm run build` пока НЕ запускать (plots.ts ещё старый — это ок).
   Логирование: без нового (rules/base.md).
   Файлы: `scripts/archive/plots-v1/*`.
-- [ ] T2. Положить новый источник в репо: `mkdir -p scripts/source`, скопировать
+- [x] T2. Положить новый источник в репо: `mkdir -p scripts/source`, скопировать
   xlsx из `/home/povly/Загрузки/Telegram Desktop/Объекты_для_размещения_на_сайте_МАН.xlsx`
   → `scripts/source/Объекты_для_размещения_на_сайте_МАН.xlsx` (копировать через
   glob — имя содержит «й», возможна NFD-нормализация). Проверка: `git status`
