@@ -62,36 +62,36 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Границы по ФАКТИЧЕСКИМ точкам меток (включая приближённые)
-    // Минимальный охват рамки в градусах — иначе одна точка даёт максимальный зум
-    const MIN_VIEW_SPAN = 4;
+  // Границы по фактическим точкам меток. Минимальный охват рамки в градусах —
+  // иначе один-два участка дают чрезмерный зум
+  const MIN_VIEW_SPAN = 4;
 
-    function boundsOf(visiblePlots: readonly PlotArea[]): [number, number][] | null {
-      const points = placemarks
-        .filter(({plot}) => visiblePlots.includes(plot))
-        .map(({point}) => point);
-      if (points.length === 0) return null;
-      const lats = points.map(([lat]) => lat);
-      const lons = points.map(([, lon]) => lon);
-      let minLat = Math.min(...lats);
-      let maxLat = Math.max(...lats);
-      let minLon = Math.min(...lons);
-      let maxLon = Math.max(...lons);
-      if (maxLat - minLat < MIN_VIEW_SPAN) {
-        const mid = (minLat + maxLat) / 2;
-        minLat = mid - MIN_VIEW_SPAN / 2;
-        maxLat = mid + MIN_VIEW_SPAN / 2;
-      }
-      if (maxLon - minLon < MIN_VIEW_SPAN) {
-        const mid = (minLon + maxLon) / 2;
-        minLon = mid - MIN_VIEW_SPAN / 2;
-        maxLon = mid + MIN_VIEW_SPAN / 2;
-      }
-      return [
-        [minLat, minLon],
-        [maxLat, maxLon],
-      ];
+  function boundsOf(visiblePlots: readonly PlotArea[]): [number, number][] | null {
+    const points = placemarks
+      .filter(({plot}) => visiblePlots.includes(plot))
+      .map(({point}) => point);
+    if (points.length === 0) return null;
+    const lats = points.map(([lat]) => lat);
+    const lons = points.map(([, lon]) => lon);
+    let minLat = Math.min(...lats);
+    let maxLat = Math.max(...lats);
+    let minLon = Math.min(...lons);
+    let maxLon = Math.max(...lons);
+    if (maxLat - minLat < MIN_VIEW_SPAN) {
+      const mid = (minLat + maxLat) / 2;
+      minLat = mid - MIN_VIEW_SPAN / 2;
+      maxLat = mid + MIN_VIEW_SPAN / 2;
     }
+    if (maxLon - minLon < MIN_VIEW_SPAN) {
+      const mid = (minLon + maxLon) / 2;
+      minLon = mid - MIN_VIEW_SPAN / 2;
+      maxLon = mid + MIN_VIEW_SPAN / 2;
+    }
+    return [
+      [minLat, minLon],
+      [maxLat, maxLon],
+    ];
+  }
 
   function fitTo(visiblePlots: readonly PlotArea[]): void {
     if (!map) return;
@@ -99,11 +99,30 @@ window.addEventListener('DOMContentLoaded', () => {
     if (bounds) map.setBounds(bounds, {checkZoomRange: true, zoomMargin: 40});
   }
 
+  // Уровень района: приближенно, но не слишком — фиксированный зум вместо
+  // setBounds (рамка в градусах на большом вьюпорте даёт слишком далёкий зум)
+  const DISTRICT_ZOOM = 9;
+
+  function focusDistrict(visiblePlots: readonly PlotArea[]): void {
+    if (!map || visiblePlots.length === 0) return;
+    const lats = visiblePlots
+      .map((plot) => plot.point?.[0])
+      .filter((v): v is number => v != null);
+    const lons = visiblePlots
+      .map((plot) => plot.point?.[1])
+      .filter((v): v is number => v != null);
+    if (lats.length === 0) return;
+    map.setCenter(
+      [(Math.min(...lats) + Math.max(...lats)) / 2, (Math.min(...lons) + Math.max(...lons)) / 2],
+      DISTRICT_ZOOM,
+    );
+  }
+
   function focusPlot(plot: PlotArea): void {
     if (!map) return;
     const match = placemarks.find((item) => item.plot === plot);
     if (!match) return;
-    map.setCenter(match.point, 8);
+    map.setCenter(match.point, 10);
     match.placemark.balloon.open();
   }
 
@@ -189,7 +208,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const districtPlots = plotsInScope('plots');
     refs.placesTitle.textContent = districtDisplayName(navigation.district ?? '');
     setPlacemarksVisible(districtPlots);
-    fitTo(districtPlots);
+    focusDistrict(districtPlots);
     renderList(
       {container: refs.placesItems, variant: 'place'},
       districtPlots.map((plot) => ({
